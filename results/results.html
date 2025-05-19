@@ -1,0 +1,398 @@
+
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>Результати тестування паралельного сортування матриць</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      .chart-container {
+        width: 800px;
+        height: 500px;
+        margin: 20px auto;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: right;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Результати тестування паралельного сортування матриць</h1>
+    
+    <h2>Системна інформація</h2>
+    <ul>
+      <li><strong>Процесор:</strong> 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz</li>
+      <li><strong>Кількість ядер:</strong> 8</li>
+      <li><strong>Оперативна пам'ять:</strong> 16 GB</li>
+      <li><strong>Архітектура:</strong> x64</li>
+      <li><strong>Платформа:</strong> win32 10.0.26100</li>
+    </ul>
+  
+    <h2>Матриця 100x100</h2>
+    <table>
+      <tr>
+        <th>Кількість потоків</th>
+        <th>Час виконання (мс)</th>
+      </tr>
+    
+      <tr>
+        <td>1</td>
+        <td>4.77</td>
+      </tr>
+      
+      <tr>
+        <td>2</td>
+        <td>76.15</td>
+      </tr>
+      
+      <tr>
+        <td>3</td>
+        <td>75.18</td>
+      </tr>
+      
+      <tr>
+        <td>4</td>
+        <td>77.66</td>
+      </tr>
+      
+      <tr>
+        <td>5</td>
+        <td>100.58</td>
+      </tr>
+      
+      <tr>
+        <td>6</td>
+        <td>92.71</td>
+      </tr>
+      
+      <tr>
+        <td>7</td>
+        <td>97.97</td>
+      </tr>
+      
+      <tr>
+        <td>8</td>
+        <td>113.24</td>
+      </tr>
+      
+      <tr>
+        <td>9</td>
+        <td>132.56</td>
+      </tr>
+      
+      <tr>
+        <td>10</td>
+        <td>137.29</td>
+      </tr>
+      
+      <tr>
+        <td>11</td>
+        <td>143.26</td>
+      </tr>
+      
+      <tr>
+        <td>12</td>
+        <td>153.13</td>
+      </tr>
+      
+      <tr>
+        <td>13</td>
+        <td>180.26</td>
+      </tr>
+      
+      <tr>
+        <td>14</td>
+        <td>172.19</td>
+      </tr>
+      
+      <tr>
+        <td>15</td>
+        <td>187.24</td>
+      </tr>
+      
+      <tr>
+        <td>16</td>
+        <td>205.37</td>
+      </tr>
+      
+      <tr>
+        <td>17</td>
+        <td>226.00</td>
+      </tr>
+      
+      <tr>
+        <td>18</td>
+        <td>236.95</td>
+      </tr>
+      
+      <tr>
+        <td>19</td>
+        <td>271.81</td>
+      </tr>
+      
+      <tr>
+        <td>20</td>
+        <td>249.89</td>
+      </tr>
+      </table>
+    
+    <div class="chart-container">
+      <canvas id="chart100"></canvas>
+    </div>
+    
+    <h2>Матриця 1000x1000</h2>
+    <table>
+      <tr>
+        <th>Кількість потоків</th>
+        <th>Час виконання (мс)</th>
+      </tr>
+    
+      <tr>
+        <td>1</td>
+        <td>235.59</td>
+      </tr>
+      
+      <tr>
+        <td>3</td>
+        <td>273.04</td>
+      </tr>
+      
+      <tr>
+        <td>5</td>
+        <td>241.78</td>
+      </tr>
+      
+      <tr>
+        <td>7</td>
+        <td>254.86</td>
+      </tr>
+      
+      <tr>
+        <td>9</td>
+        <td>325.25</td>
+      </tr>
+      
+      <tr>
+        <td>11</td>
+        <td>327.33</td>
+      </tr>
+      
+      <tr>
+        <td>13</td>
+        <td>404.01</td>
+      </tr>
+      
+      <tr>
+        <td>15</td>
+        <td>383.50</td>
+      </tr>
+      
+      <tr>
+        <td>17</td>
+        <td>407.62</td>
+      </tr>
+      
+      <tr>
+        <td>19</td>
+        <td>489.47</td>
+      </tr>
+      </table>
+    
+    <div class="chart-container">
+      <canvas id="chart1000"></canvas>
+    </div>
+    
+    <h2>Матриця 5000x5000</h2>
+    <table>
+      <tr>
+        <th>Кількість потоків</th>
+        <th>Час виконання (мс)</th>
+      </tr>
+    
+      <tr>
+        <td>1</td>
+        <td>6867.28</td>
+      </tr>
+      
+      <tr>
+        <td>6</td>
+        <td>3595.09</td>
+      </tr>
+      
+      <tr>
+        <td>11</td>
+        <td>3743.33</td>
+      </tr>
+      
+      <tr>
+        <td>16</td>
+        <td>4449.11</td>
+      </tr>
+      
+      <tr>
+        <td>21</td>
+        <td>4602.81</td>
+      </tr>
+      
+      <tr>
+        <td>26</td>
+        <td>5217.34</td>
+      </tr>
+      
+      <tr>
+        <td>31</td>
+        <td>5917.81</td>
+      </tr>
+      
+      <tr>
+        <td>36</td>
+        <td>5194.33</td>
+      </tr>
+      
+      <tr>
+        <td>41</td>
+        <td>5727.85</td>
+      </tr>
+      
+      <tr>
+        <td>46</td>
+        <td>6048.83</td>
+      </tr>
+      
+      <tr>
+        <td>51</td>
+        <td>5920.78</td>
+      </tr>
+      
+      <tr>
+        <td>56</td>
+        <td>6339.81</td>
+      </tr>
+      
+      <tr>
+        <td>61</td>
+        <td>6350.37</td>
+      </tr>
+      
+      <tr>
+        <td>66</td>
+        <td>7452.24</td>
+      </tr>
+      
+      <tr>
+        <td>71</td>
+        <td>7089.88</td>
+      </tr>
+      
+      <tr>
+        <td>76</td>
+        <td>7448.56</td>
+      </tr>
+      
+      <tr>
+        <td>81</td>
+        <td>7826.54</td>
+      </tr>
+      
+      <tr>
+        <td>86</td>
+        <td>8657.26</td>
+      </tr>
+      
+      <tr>
+        <td>91</td>
+        <td>8092.97</td>
+      </tr>
+      
+      <tr>
+        <td>96</td>
+        <td>8311.42</td>
+      </tr>
+      </table>
+    
+    <div class="chart-container">
+      <canvas id="chart5000"></canvas>
+    </div>
+    
+    <script>
+      // Функція для побудови графіків
+      function createChart(canvasId, labels, data, title) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Час виконання (мс)',
+              data: data,
+              borderColor: 'rgb(75, 192, 192)',
+              tension: 0.1,
+              pointRadius: 2
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Час (мс)'
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Кількість потоків'
+                }
+              }
+            },
+            plugins: {
+              title: {
+                display: true,
+                text: title,
+                font: {
+                  size: 16
+                }
+              }
+            }
+          }
+        });
+      }
+  
+      // Дані для матриці 100x100
+      const labels100 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+      const data100 = [4.77, 76.15, 75.18, 77.66, 100.58, 92.71, 97.97, 113.24, 132.56, 137.29, 143.26, 153.13, 180.26, 172.19, 187.24, 205.37, 226.00, 236.95, 271.81, 249.89];
+      createChart('chart100', labels100, data100, 'Час сортування матриці 100x100');
+    
+      // Дані для матриці 1000x1000
+      const labels1000 = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+      const data1000 = [235.59, 273.04, 241.78, 254.86, 325.25, 327.33, 404.01, 383.50, 407.62, 489.47];
+      createChart('chart1000', labels1000, data1000, 'Час сортування матриці 1000x1000');
+    
+      // Дані для матриці 5000x5000
+      const labels5000 = [1, 6, 11, 16, 21, 26, 31, 36, 41, 46, 51, 56, 61, 66, 71, 76, 81, 86, 91, 96];
+      const data5000 = [6867.28, 3595.09, 3743.33, 4449.11, 4602.81, 5217.34, 5917.81, 5194.33, 5727.85, 6048.83, 5920.78, 6339.81, 6350.37, 7452.24, 7089.88, 7448.56, 7826.54, 8657.26, 8092.97, 8311.42];
+      createChart('chart5000', labels5000, data5000, 'Час сортування матриці 5000x5000');
+    
+    </script>
+  </body>
+  </html>
+  

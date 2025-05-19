@@ -73,6 +73,7 @@ async function sortMatrixMultiThreaded(matrix, numThreads) {
   
   for (let i = 0; i < actualThreads; i++) {
     workerPromises.push(new Promise((resolve) => {
+      // Створюємо нового воркера
       const worker = new Worker(__filename, {
         workerData: { isWorker: true }
       });
@@ -94,6 +95,12 @@ async function sortMatrixMultiThreaded(matrix, numThreads) {
           // Якщо черга порожня, завершуємо воркер
           worker.postMessage({ command: 'exit' });
         }
+      });
+      
+      worker.on('error', (error) => {
+        console.error(`Помилка в воркері: ${error}`);
+        worker.postMessage({ command: 'exit' });
+        resolve();
       });
       
       worker.on('exit', () => {
@@ -126,34 +133,41 @@ async function measureSortingTime(matrixSize, numThreads) {
   
   const results = [];
   
-  for (let run = 0; run < NUM_RUNS; run++) {
-    // Генеруємо матрицю
-    const matrix = generateMatrix(matrixSize);
-    
-    // Створюємо копію для перевірки
-    const originalMatrix = matrix.map(row => [...row]);
-    
-    // Замір часу
-    const startTime = process.hrtime.bigint();
-    
-    if (numThreads === 1) {
-      sortMatrixSingleThread(matrix);
-    } else {
-      await sortMatrixMultiThreaded(matrix, numThreads);
+  try {
+    for (let run = 0; run < NUM_RUNS; run++) {
+      console.log(`Прогін ${run + 1} розпочато...`);
+      
+      // Генеруємо матрицю
+      const matrix = generateMatrix(matrixSize);
+      
+      // Замір часу
+      const startTime = process.hrtime.bigint();
+      
+      if (numThreads === 1) {
+        sortMatrixSingleThread(matrix);
+      } else {
+        await sortMatrixMultiThreaded(matrix, numThreads);
+      }
+      
+      const endTime = process.hrtime.bigint();
+      const elapsedTimeMs = Number(endTime - startTime) / 1_000_000;
+      
+      console.log(`Прогін ${run + 1}: ${elapsedTimeMs.toFixed(2)} мс`);
+      results.push(elapsedTimeMs);
     }
     
-    const endTime = process.hrtime.bigint();
-    const elapsedTimeMs = Number(endTime - startTime) / 1_000_000;
+    // Розрахунок середнього часу
+    const averageTime = results.reduce((sum, time) => sum + time, 0) / results.length;
+    console.log(`Середній час: ${averageTime.toFixed(2)} мс`);
     
-    console.log(`Прогін ${run + 1}: ${elapsedTimeMs.toFixed(2)} мс`);
-    results.push(elapsedTimeMs);
+    return averageTime;
+  } catch (error) {
+    console.error(`Помилка при вимірюванні часу для матриці ${matrixSize}x${matrixSize} з ${numThreads} потоками:`, error);
+    // Повертаємо середнє із наявних результатів або 0, якщо результатів немає
+    return results.length > 0 
+      ? results.reduce((sum, time) => sum + time, 0) / results.length 
+      : 0;
   }
-  
-  // Розрахунок середнього часу
-  const averageTime = results.reduce((sum, time) => sum + time, 0) / results.length;
-  console.log(`Середній час: ${averageTime.toFixed(2)} мс`);
-  
-  return averageTime;
 }
 
 // Функція для збереження результатів у файл
@@ -340,40 +354,57 @@ function generateCharts(results) {
 
 // Головна функція для виконання тестування
 async function runBenchmark() {
+  // Перевіряємо, чи це воркер або головний потік
   if (!isMainThread) {
     // Код для воркера
-    parentPort.on('message', async (message) => {
-      if (message.command === 'sort') {
-        const sortedRow = quickSort(message.row);
-        parentPort.postMessage({ rowIndex: message.rowIndex, sortedRow });
-      } else if (message.command === 'exit') {
-        process.exit(0);
+    parentPort.on('message', (message) => {
+      try {
+        if (message.command === 'sort') {
+          const sortedRow = quickSort(message.row);
+          parentPort.postMessage({ rowIndex: message.rowIndex, sortedRow });
+        } else if (message.command === 'exit') {
+          process.exit(0);
+        }
+      } catch (error) {
+        console.error('Помилка в воркері:', error);
+        parentPort.postMessage({ error: error.message });
+        process.exit(1);
       }
     });
     return;
   }
   
   // Код для головного потоку
-  console.log('Починаємо тестування сортування матриць...');
-  
-  const allResults = [];
-  
-  // Тестуємо для різних розмірів матриць
-  for (const size of MATRIX_SIZES) {
-    console.log(`\n=== Матриця ${size}x${size} ===`);
+  try {
+    console.log('Починаємо тестування сортування матриць...');
     
-    // Тестуємо різну кількість потоків
-    for (let threads = 1; threads <= MAX_THREADS; threads++) {
-      const time = await measureSortingTime(size, threads);
-      allResults.push({ matrixSize: size, numThreads: threads, time });
+    const allResults = [];
+    
+    // Тестуємо для різних розмірів матриць
+    for (const size of MATRIX_SIZES) {
+      console.log(`\n=== Матриця ${size}x${size} ===`);
+      
+      // Обмежимо кількість потоків для тестування, щоб не перевантажувати систему
+      const maxThreadsToTest = Math.min(MAX_THREADS, Math.max(20, size / 50));
+      console.log(`Будемо тестувати до ${maxThreadsToTest} потоків`);
+      
+      // Тестуємо різну кількість потоків з кроком, щоб скоротити час виконання
+      const threadStep = size <= 100 ? 1 : (size <= 1000 ? 2 : 5);
+      
+      for (let threads = 1; threads <= maxThreadsToTest; threads += threadStep) {
+        const time = await measureSortingTime(size, threads);
+        allResults.push({ matrixSize: size, numThreads: threads, time });
+      }
     }
+    
+    // Зберігаємо результати і генеруємо графіки
+    saveResults(allResults);
+    generateCharts(allResults);
+    
+    console.log('\nТестування завершено. Результати збережено в папці "results".');
+  } catch (error) {
+    console.error('Помилка при виконанні тестування:', error);
   }
-  
-  // Зберігаємо результати і генеруємо графіки
-  saveResults(allResults);
-  generateCharts(allResults);
-  
-  console.log('\nТестування завершено. Результати збережено в папці "results".');
 }
 
 runBenchmark().catch(console.error);
